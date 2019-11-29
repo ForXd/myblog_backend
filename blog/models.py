@@ -1,12 +1,27 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+import jwt
+from backend import settings
 
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(to=User, on_delete=models.CASCADE)
+class User(AbstractUser):
     avatar = models.CharField(max_length=500, blank=True, null=True)
-    focus = models.ForeignKey('self', related_name='follower_users', null=True, blank=True, on_delete=models.SET_NULL)
-    followers = models.ForeignKey('self', related_name='focus_users', null=True, blank=True, on_delete=models.SET_NULL)
+    focus = models.ForeignKey('self', related_name='follower_users',
+                              null=True, blank=True, on_delete=models.SET_NULL)
+    followers = models.ForeignKey('self', related_name='focus_users',
+                                  null=True, blank=True, on_delete=models.SET_NULL)
+
+    @property
+    def token(self):
+        return self._generate_jwt_token()
+
+    def _generate_jwt_token(self):
+        token = jwt.encode({
+            'user': {
+                'username': self.username
+            }
+        }, settings.SECRET_KEY, algorithm='HS256')
+        return token.decode('utf-8')
 
 
 class Post(models.Model):
