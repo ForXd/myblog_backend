@@ -8,7 +8,7 @@ class PostSerializer(serializers.ModelSerializer):
     """
     title = serializers.CharField()
     category = serializers.CharField()
-    content = serializers.CharField()
+    content = serializers.CharField(trim_whitespace=False)
 
     # def validate_title(value):
     #     """
@@ -40,10 +40,10 @@ class FullPostSerializer(serializers.ModelSerializer):
         return full post
     """
     author = serializers.PrimaryKeyRelatedField(read_only=True)
-    comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    post_comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True, allow_null=True)
 
     class Meta:
         model = Post
         fields = ['id', 'author', 'title', 'category',
                   'partial', 'content', 'postTime',
-                  'praiseNum', 'comments']
+                  'praiseNum', 'post_comments']
