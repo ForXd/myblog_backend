@@ -1,5 +1,5 @@
 from django.contrib import auth
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from blog.models import User
 from rest_framework import viewsets
@@ -56,12 +56,14 @@ class LoginViewSet(viewsets.GenericViewSet):
             password = serializer.validated_data['password']
             user = authenticate(username=username, password=password)
             if user:
+                login(request, user)
                 return Response({'success': 1, 'token': user.token})
         return Response({'success': 0, 'message': 'invalid name or password'})
 
     @action(detail=False, methods=['POST'])
     def logout(self, request):
         auth.logout(request)
+        print('logout')
         return Response({'success': 1, 'message': ''})
 
     @action(detail=False)
