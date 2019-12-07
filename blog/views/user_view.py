@@ -60,7 +60,7 @@ class LoginViewSet(viewsets.GenericViewSet):
                 return Response({'success': 1, 'token': user.token})
         return Response({'success': 0, 'message': 'invalid name or password'})
 
-    @action(detail=False, methods=['POST'])
+    @action(detail=False, methods=['GET'])
     def logout(self, request):
         auth.logout(request)
         print('logout')
