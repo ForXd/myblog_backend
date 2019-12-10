@@ -19,3 +19,4 @@ class ReturnCommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ['id', 'author', 'content',
                   'toPost', 'praiseNum', 'reply_comments']
+
