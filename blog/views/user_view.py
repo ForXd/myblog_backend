@@ -1,7 +1,7 @@
 from django.contrib import auth
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
-from blog.models import User
+from blog.models import User, Message
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -22,7 +22,6 @@ class LoginViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=['POST'])
     def set_password(self, request, pk=None):
         user = self.get_object()
-        print(user)
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user.set_password(serializer.data['password'])
@@ -33,9 +32,7 @@ class LoginViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=['POST'])
     def register(self, request):
         serializer = self.get_serializer(data=request.data)
-        print(serializer.initial_data)
         if serializer.is_valid():
-            print(2)
             username = serializer.validated_data['username']
             password = serializer.validated_data['password']
             if User.objects.filter(username=username):
@@ -50,7 +47,6 @@ class LoginViewSet(viewsets.GenericViewSet):
     @csrf_exempt
     def login(self, request):
         serializer = self.get_serializer(data=request.data)
-        print(serializer.initial_data)
         if serializer.is_valid():
             username = serializer.validated_data['username']
             password = serializer.validated_data['password']
@@ -63,7 +59,6 @@ class LoginViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=['GET'])
     def logout(self, request):
         auth.logout(request)
-        print('logout')
         return Response({'success': 1, 'message': ''})
 
     @action(detail=False)
